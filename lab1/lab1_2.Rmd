@@ -65,7 +65,7 @@ Statistics are what R was originally written for and there are thousands of pack
 First, we need to make a vector or string of values which we will store as an object x. More on this later...
 ```{r}
 x <- c(4, 6, 8, 5, 6, 7, 7, 7)
-x gets a string of values 
+#x gets a string of values 
 ```
 
 ```{r}
