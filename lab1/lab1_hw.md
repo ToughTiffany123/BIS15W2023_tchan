@@ -1,7 +1,7 @@
 ---
 title: "Lab 1 Homework"
-author: "Please Add Your Name Here"
-date: "2023-01-10"
+author: "Tiffany Chan"
+date: "2023-01-12"
 output:
   html_document: 
     theme: spacelab
@@ -47,6 +47,7 @@ RStudio is a GUI that allows working in R to be easier. R is the actual code. Gi
   
 **5. Did any of the results in #4 surprise you? Write two programs that calculate each expression such that the result for the first example is 4 and the second example is 16.**    
 
+No, because I know PEMDAS
 
 ```r
 (5-3)*2
