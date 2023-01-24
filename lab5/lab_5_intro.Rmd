@@ -1,0 +1,92 @@
+---
+title: "Lab 5 Intro"
+date: "`r Sys.Date()`"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library("jpeg")
+```
+
+## Setup
+1. Login to the lab computer (please don't use your personal computer).  
+2. Navigate to github.com and login.   
+2. Copy your repository to the desktop.   
+5. Copy the class repository to the desktop (https://github.com/jmledford3115/datascibiol).  
+6. Copy the files for today's lab from the class repository and paste them into **your** repository.  
+7. Open today's lab in RStudio.  
+
+## Review from last time
+### *With a partner, discuss the following questions*
+1. What are the characteristics of `tidy` data?  
+#every variable has its own column
+#every observation has its own row
+#every value has its own cell
+2. What is the difference between `select` and `filter`?  
+Select pulls out from the columns whereas filter pulls out from the rows.
+3. When is your first midterm?  
+Our first midterm is next Tuesday
+
+## Warm-up
+###Load tidyverse
+```{r}
+library("tidyverse")
+```
+
+1. Load the bison data.
+```{r}
+bison<-readr::read_csv("data/bison.csv")
+bison
+```
+
+2. What are the dimesions and structure of the data?
+dimensions = Rows:8; Columns:8325
+```{r}
+glimpse(bison)
+```
+
+3. We are only interested in code, sex, weight, year of birth. Restrict the data to these variables and store the dataframe as a new object.
+```{r}
+bison2<-select(bison,animal_code,animal_sex,animal_weight,animal_yob)
+bison2
+```
+
+4. Pull out the animals born between 1980-1990.
+```{r}
+table(bison$animal_yob)
+```
+
+```{r}
+boomer_bison<-filter(bison2,animal_yob>=1980&animal_yob<=1990)
+boomer_bison
+```
+```{r}
+
+```
+
+
+5. How many male and female bison are represented between 1980-1990?
+```{r}
+table(boomer_bison$animal_sex)
+```
+
+6. Between 1980-1990, were males or females larger on average?
+#males are larger on everage
+```{r}
+m_boomer_bison<-filter(boomer_bison,animal_sex=="M")
+m_boomer_bison
+```
+
+```{r}
+f_boomer_bison<-filter(boomer_bison,animal_sex=="F")
+f_boomer_bison
+```
+
+```{r}
+mean(m_boomer_bison$animal_weight)
+```
+```{r}
+mean(f_boomer_bison$animal_weight)
+```
+
