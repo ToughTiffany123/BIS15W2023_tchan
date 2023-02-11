@@ -172,11 +172,12 @@ Boxplots help us visualize a range of values. So, on the x-axis we typically hav
 Let's look at the variable `log10.mass` grouped by taxonomic class.
 
 ```r
-homerange %>% 
+homerange_boxplot<-homerange %>% 
   group_by(class) %>% 
   summarize(min_log10.mass=min(log10.mass),
             max_log10.mass=max(log10.mass),
             median_log10.mass=median(log10.mass))
+homerange_boxplot
 ```
 
 ```
@@ -191,12 +192,75 @@ homerange %>%
 
 Make this output more visual by making a plot...
 
+```r
+homerange %>% 
+  ggplot(aes(x=class,y=log10.mass))+geom_boxplot()
+```
+
+![](lab9_2_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
 
 ## Practice
 1. There are more herbivores than carnivores in the homerange data, but how do their masses compare? Make a summary and boxplot that compares their masses. Use `log10.mass`.
 
 
+```r
+homerange %>% 
+  group_by(trophic.guild) %>% 
+  summarize(mean_mass=mean(log10.mass))
+```
+
+```
+## # A tibble: 2 × 2
+##   trophic.guild mean_mass
+##   <chr>             <dbl>
+## 1 carnivore          2.24
+## 2 herbivore          3.13
+```
+
+
+
+
+```r
+homerange %>% 
+  group_by(trophic.guild) %>% 
+  summarize(mean_mass=mean(log10.mass)) %>% 
+  ggplot(aes(x=trophic.guild,y=mean_mass))+geom_col()
+```
+
+![](lab9_2_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+
+
 2. Have a closer look at carnivorous mammals. Summarize the range of log10.mass by family.
+
+```r
+homerange %>% 
+  filter(trophic.guild=="carnivore") %>% 
+  group_by(family) %>% 
+  summarize(min_mass_range=round(min(log10.mass),3),
+            max_mass_range=round(max(log10.mass),3)
+            ) %>% 
+  unite("mass_range",
+        -family,
+        sep="-",
+        remove=T)
+```
+
+```
+## # A tibble: 94 × 2
+##    family         mass_range 
+##    <chr>          <chr>      
+##  1 accipitridae   2.149-3.477
+##  2 acrocephalisae 1.041-1.041
+##  3 aegithalidae   0.903-0.903
+##  4 alaudidae      1.477-1.477
+##  5 anguillidae    2.948-2.948
+##  6 apterygidae    3.365-3.365
+##  7 ardeidae       1.826-2.954
+##  8 canidae        3.32-4.443 
+##  9 caprimulgidae  1.681-1.681
+## 10 carangidae     2.861-2.861
+## # … with 84 more rows
+```
 
 
 3. Now use a boxplot to visualize the range of log10.mass by family of mammalian carnivore.

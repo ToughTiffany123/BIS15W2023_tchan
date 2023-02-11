@@ -1,7 +1,7 @@
 ---
 title: "Lab 8 Homework"
 author: "Please Add Your Name Here"
-date: "2023-02-08"
+date: "2023-02-10"
 output:
   html_document: 
     theme: spacelab
@@ -41,12 +41,12 @@ getwd()
 ```
 
 ```
-## [1] "/Users/tiffanysmacbookpro/Desktop/BIS15W2023_tchan/lab8"
+## [1] "/Users/tiffanysmacbookpro/Desktop/BIS15W2023_tchan/lab8/hw_8"
 ```
 
 
 ```r
-sydneybeaches<-read_csv("data/sydneybeaches.csv")
+sydneybeaches<-read_csv("../data/sydneybeaches.csv")
 ```
 
 ```

@@ -3,9 +3,9 @@ title: "Lab 9 Homework"
 author: "Please Add Your Name Here"
 date: "`r Sys.Date()`"
 output:
-  html_document:
+  html_document: 
     theme: spacelab
-    toc: no
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -23,11 +23,13 @@ library(tidyverse)
 library(janitor)
 library(here)
 library(naniar)
+getwd()
 ``` 
 
 For this homework, we will take a departure from biological data and use data about California colleges. These data are a subset of the national college scorecard (https://collegescorecard.ed.gov/data/). Load the `ca_college_data.csv` as a new object called `colleges`.
 ```{r}
-
+colleges<-read_csv("data/ca_college_data.csv")
+colleges
 ```
 
 The variables are a bit hard to decipher, here is a key:  
@@ -45,78 +47,142 @@ PFTFTUG1_EF: Percentage of undergraduate students who are first-time, full-time 
 
 1. Use your preferred function(s) to have a look at the data and get an idea of its structure. Make sure you summarize NA's and determine whether or not the data are tidy. You may also consider dealing with any naming issues.
 ```{r}
-
+glimpse(colleges)
 ```
 
 ```{r}
-
+colleges<-clean_names(colleges)
 ```
 
 ```{r}
-
+colleges %>%
+  summarise_all(~(sum(is.na(.))))
 ```
 
 2. Which cities in California have the highest number of colleges?
 ```{r}
-
+ca_college<-colleges %>% 
+  filter(stabbr=="CA") %>% 
+  group_by(city) %>% 
+  summarize("n_colleges"=n()) %>% 
+  arrange(-n_colleges)
+ca_college
 ```
 
 3. Based on your answer to #2, make a plot that shows the number of colleges in the top 10 cities.
 ```{r}
-
+ca_college %>% 
+  head(n=10) %>% 
+  ggplot(aes(x=city,y=n_colleges))+
+  geom_col()
 ```
 
 4. The column `COSTT4_A` is the annual cost of each institution. Which city has the highest average cost? Where is it located?
 ```{r}
-
+city_cost<-colleges %>% 
+  group_by(city) %>% 
+  summarize("mean_cost"=mean(costt4_a,na.rm=T)) %>% 
+  arrange(-mean_cost)
+city_cost
 ```
 
 5. Based on your answer to #4, make a plot that compares the cost of the individual colleges in the most expensive city. Bonus! Add UC Davis here to see how it compares :>).
 ```{r}
+claremont_davis<-colleges %>% 
+  filter(city=="Claremont"|city=="Davis") %>% 
+  select(instnm,city,costt4_a)
+claremont_davis
+```
 
+```{r}
+claremont_davis %>% 
+  ggplot(aes(x=instnm,y=costt4_a))+
+  geom_col()
 ```
 
 6. The column `ADM_RATE` is the admissions rate by college and `C150_4_POOLED` is the four-year completion rate. Use a scatterplot to show the relationship between these two variables. What do you think this means?
-```{r}
 
+
+What this scatterplot tells use is that there is a weak,linear, negative relationship between admission rate and completion rate, meaning that in the colleges with higher acception rates, the percentage of people who completed their four-year degrees decreased.
+
+
+```{r}
+colleges %>% 
+  ggplot(aes(x=adm_rate,y=c150_4_pooled))+
+  geom_point()
 ```
 
 7. Is there a relationship between cost and four-year completion rate? (You don't need to do the stats, just produce a plot). What do you think this means?
-```{r}
 
+
+There is a linear positive relationship between cost and four-year completion rate. This means that the higher cost of the college, the college had more percentage of students completeing their 4 year degree.
+
+
+```{r}
+colleges %>% 
+  ggplot(aes(x=costt4_a,y=c150_4_pooled))+
+  geom_point()+
+  geom_smooth(method=lm,se=T)
 ```
 
 8. The column titled `INSTNM` is the institution name. We are only interested in the University of California colleges. Make a new data frame that is restricted to UC institutions. You can remove `Hastings College of Law` and `UC San Francisco` as we are only interested in undergraduate institutions.
-```{r}
 
+
+```{r}
+uc_colleges<-colleges %>% 
+  filter(stabbr=="CA") %>% 
+  arrange(instnm) %>% 
+  filter(instnm=="University of California-Berkeley"|instnm=="University of California-Davis"|instnm=="University of California-Hastings College of Law"|instnm=="University of California-Irvine"|instnm=="University of California-Los Angeles"|instnm=="University of California-Riverside"|instnm=="University of California-San Diego"|instnm=="University of California-San Francisco"|instnm=="University of California-Santa Barbara"|instnm=="University of California-Santa Cruz")
+uc_colleges
 ```
 
 Remove `Hastings College of Law` and `UC San Francisco` and store the final data frame as a new object `univ_calif_final`.
 ```{r}
-
+univ_calif_final<-uc_colleges %>% 
+  filter(instnm!="University of California-Hastings College of Law",instnm!="University of California-San Francisco")
+univ_calif_final
 ```
 
 Use `separate()` to separate institution name into two new columns "UNIV" and "CAMPUS".
 ```{r}
-
+univ_calif_final %>% 
+  separate(instnm,into=c("univ","campus"),sep="-")
 ```
 
 9. The column `ADM_RATE` is the admissions rate by campus. Which UC has the lowest and highest admissions rates? Produce a numerical summary and an appropriate plot.
 ```{r}
-
+lowest<-univ_calif_final %>% 
+  arrange(adm_rate) %>% 
+  head(n=1)
+lowest
 ```
 
 ```{r}
-
+highest<-univ_calif_final %>% 
+  arrange(adm_rate) %>% 
+  tail(n=1)
+highest
+```
+```{r}
+univ_calif_final %>% 
+  filter(city=="Riverside"|city=="Berkeley") %>% 
+  ggplot(aes(x=instnm,y=adm_rate))+
+  geom_col()
 ```
 
 10. If you wanted to get a degree in biological or biomedical sciences, which campus confers the majority of these degrees? Produce a numerical summary and an appropriate plot.
 ```{r}
-
+degree<-colleges %>% 
+  select(instnm,pcip26) %>% 
+  arrange(-pcip26) %>% 
+  head(n=5)
+degree
 ```
 
 ```{r}
-
+degree %>% 
+  ggplot(aes(x=instnm,y=pcip26))+
+  geom_col()
 ```
 
 ## Knit Your Output and Post to [GitHub](https://github.com/FRS417-DataScienceBiologists)

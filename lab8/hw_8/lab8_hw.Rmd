@@ -40,7 +40,7 @@ getwd()
 ```
 
 ```{r}
-sydneybeaches<-read_csv("data/sydneybeaches.csv")
+sydneybeaches<-read_csv("../data/sydneybeaches.csv")
 ```
 
 If you want to try `here`, first notice the output when you load the `here` library. It gives you information on the current working directory. You can then use it to easily and intuitively load files.
