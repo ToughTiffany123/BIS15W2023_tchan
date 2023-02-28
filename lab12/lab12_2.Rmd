@@ -215,7 +215,8 @@ ui <- dashboardPage(
   ) # close the dashboard body
 ) # close the ui
 
-server <- function(input, output, session) { 
+server <- function(input, output, session) {
+  session$onSessionEnded(stopApp)
   output$plot <- renderPlot({
   ggplot(penguins, aes_string(x = input$x, y = input$y, color="species")) +
       geom_point(size=input$pointsize, alpha=0.8) + 
@@ -273,6 +274,9 @@ wolves <- read_csv("data/wolves_data/wolves_dataset.csv")
 ```{r}
 names(wolves)
 ```
+```{r}
+tabyl(wolves$pop)
+```
 
 2. For the app, here is a faceted version of what we are looking for. We want the reactive part to be `pop` and you should use `shinydashboard`.
 ```{r}
@@ -281,6 +285,48 @@ wolves %>%
   ggplot(aes(x=sex, fill=sex))+
   geom_bar()+
   facet_wrap(~pop)
+```
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+   selectInput("x", 
+               "Select Type of Population", 
+               choices = c(
+                 "AK.PEN",
+                 "BAN.JAS",
+                 "BC",
+                 "DENALI",
+                 "ELLES",
+                 "GTNP",
+                 "INT.AK",
+                 "MEXICAN",
+                 "MI",
+                 "MT",
+                 "N.NWT",
+                 "ONT",
+                 "SE.AK",
+                 "SNF",
+                 "SS.NWT",
+                 "YNP",
+                 "YUCH"), 
+              selected = "AK.PEN"),
+  plotOutput("plot", width = "500px", height = "400px")
+)
+
+server <- function(input, output, session){
+  session$onSessionEnded(stopApp)
+  output$plot <- renderPlot({
+    wolves %>% 
+      filter(pop==input$x) %>% 
+    ggplot(aes(x = sex, fill=sex)
+           ) +
+      geom_bar()
+})
+  
+}
+
+shinyApp(ui, server)
 ```
 
 ## Wrap-up  
